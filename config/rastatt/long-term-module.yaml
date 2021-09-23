@@ -1,0 +1,46 @@
+carOwnership:
+  engine: config/shared/parameters/SociodemographicCoefficients.txt
+  ownership: config/shared/parameters/CarOwnershipModelParameter.txt
+  segment: config/shared/parameters/LogitBasedCarSegmentModelParameter.txt
+commuterTicket: config/shared/parameters/transit_pass_ownership_parameters.txt
+dataSource: !file
+  demandDataFolder: output/rastatt/demand-data
+  matrixConfigurationFile: data/rastatt/matrices/analysis/matrix-configuration.yaml
+  attractivityDataFile: data/rastatt/zoneproperties/analysis/Attractivities.csv
+  zonePropertiesDataFile: data/rastatt/zoneproperties/analysis/zoneproperties.csv
+  parkingFacilitiesDataFile: data/rastatt/zoneproperties/analysis/parkingFacilities.csv
+  bikeSharingPropertiesDataFile: data/rastatt/zoneproperties/analysis/bikesharing-properties.csv
+  carSharingStationsDataFile: data/rastatt/zoneproperties/analysis/carsharing-stations.csv
+  carSharingFreeFloatingDataFile: data/rastatt/zoneproperties/analysis/carsharing-free-floating.csv
+  carSharingPropertiesDataFile: data/rastatt/zoneproperties/analysis/carsharing-properties.csv
+  #charging: unlimited
+  defaultChargingPower: config/shared/parameters/ChargingPower.txt
+  zoneRepositoryFolder: output/rastatt/zone-repository/
+demandRegionMapping:
+  community:zone: data/rastatt/community-to-zone_rastatt_bsp_modell.csv  
+demographyData:
+  age_f: data/rastatt/demography/Demography.csv
+  age_m: data/rastatt/demography/Demography.csv
+  household_size: data/rastatt/demography/Demography.csv
+maxIterations: 100
+maxGoodnessDelta: 1e-5
+#numberOfZones: 2
+panelData: data/rastatt/population/population.csv
+resultFolder: output/rastatt/results/population-synthesis
+seed: 77859
+synthesisZoneProperties: data/rastatt/synthesis-zone-properties.csv
+visumFile: data/rastatt/rastatt.net.bz2
+visumToMobitopp:
+  carTransportSystemCode: CAR
+experimental:
+  actiToppPath: config/shared/parameters/actitopp_purposes
+  communityCommuters: data/rastatt/community-to-community-commuters_rastatt_bsp_modell.csv
+  maxCommutingTime: 120
+  workPoleDistanceRange: 4
+  educationPoleDistanceRange: 4
+  educationDestinationChoiceParameters: config/shared/parameters/EducationDestinationParameters.txt
+  generateExtendedArea: false
+  smalltown: config/shared/parameters/car_ownership_kleinstadt.txt
+  town: config/shared/parameters/car_ownership_stadt.txt
+  urbanArea: config/shared/parameters/car_ownership_stadt_raum.txt
+  ruralArea: config/shared/parameters/car_ownership_land_raum.txt

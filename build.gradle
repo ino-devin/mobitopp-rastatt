@@ -41,8 +41,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.8'
     implementation 'edu.kit.ifv.mobitopp:actitopp:1.9+',
     		       'edu.kit.ifv.mobitopp:mobitopp:0.3.+',
-    		       'edu.kit.ifv.mobitopp:mobitopp-intermodal:0.1.+',
-				   'edu.kit.ifv.mobitopp:analysis:0.2.0.502',
                    'net.sf.opencsv:opencsv:2.3'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0',
@@ -56,11 +54,11 @@ apply plugin: 'edu.kit.ifv.codegen.gradle.plugin'
 codeGenInp {
   outputDir = "${rootDir}/src/main/java"
   files = [
-            "${rootDir}/config/choice-models/access-carsharing.gen",
-            "${rootDir}/config/choice-models/access-public-transport.gen",
-            "${rootDir}/config/choice-models/bikesharing-membership.gen",
+//            "${rootDir}/config/choice-models/access-carsharing.gen",
+//            "${rootDir}/config/choice-models/access-public-transport.gen",
+//            "${rootDir}/config/choice-models/bikesharing-membership.gen",
 //            "${rootDir}/config/choice-models/car-ownership.gen",
-            "${rootDir}/config/choice-models/carsharing_membership.gen",
+//            "${rootDir}/config/choice-models/carsharing_membership.gen",
             "${rootDir}/config/choice-models/destination-choice.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_mode_preference.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_time_sensitivity.gen",
@@ -100,20 +98,12 @@ for (entry in longTermRuns) {
 
 
 def shortTermRuns = new LinkedHashMap()
+shortTermRuns.put("Rastatt_1p", "rastatt/short-term-module-1p.yaml")
+shortTermRuns.put("Rastatt_10p", "rastatt/short-term-module-10p.yaml")
 shortTermRuns.put("Rastatt_100p", "rastatt/short-term-module-100p.yaml")
 
 for (entry in shortTermRuns) {
 	createShortTermModuleTask(entry.getKey(), entry.getValue())
-}
-
-
-
-
-task runVisualization(type: JavaExec) {
-    args 'data/regiomove.net.bz2', 
-         '\\\\ifv-fs.ifv.kit.edu/Forschung/Projekte/RegioMOVE/RegioMOVE_Projekt/work/06 Modelle/Szenarien/Auswertungen/Plots/2020-09-13_Analysis_Results_2_simulation_pilot_1_50p/demandSimulationResult_intermodal.csv', 
-         'output/video/trips-per-mode.avi' 
-    main = "edu.kit.ifv.mobitopp.visualization.Visualization"
 }
 
 tasks.withType(JavaExec) {
