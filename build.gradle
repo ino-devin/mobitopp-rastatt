@@ -40,7 +40,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     compileOnly 'org.projectlombok:lombok:1.18.8'
     implementation 'edu.kit.ifv.mobitopp:actitopp:1.9+',
-    		       'edu.kit.ifv.mobitopp:mobitopp:0.3.+',
+    		       'edu.kit.ifv.mobitopp:mobitopp:0.2.3.+',
                    'net.sf.opencsv:opencsv:2.3'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0',
