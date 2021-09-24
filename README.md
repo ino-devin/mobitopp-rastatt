@@ -2,7 +2,7 @@
 This project is a mobiTopp example poject to get started with mobiTopp and to test its features.
 Please notice that this model does not contain real data about the actual population of the modeled area and therefore cannot be used to estimate the impact of measures on the actual area.
 
-# mobiTopp
+## mobiTopp
 [mobiTopp](http://mobitopp.ifv.kit.edu/) is an agent-based travel demand model developed at the [Institute for transport studies at the Karlsruhe Institute of Technology](http://www.ifv.kit.edu/english/index.php). Publications about mobiTopp can be found on the [project site](http://mobitopp.ifv.kit.edu/28.php).
 
 ## Execution
