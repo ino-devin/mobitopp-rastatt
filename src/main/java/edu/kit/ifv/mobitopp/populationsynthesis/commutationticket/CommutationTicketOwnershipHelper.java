@@ -3,7 +3,6 @@ package edu.kit.ifv.mobitopp.populationsynthesis.commutationticket;
 import java.util.function.DoubleSupplier;
 
 import edu.kit.ifv.mobitopp.populationsynthesis.PersonBuilder;
-import edu.kit.ifv.mobitopp.populationsynthesis.commutationticket.gen.GeneratedCommutationTicketOwnershipHelper;
 import edu.kit.ifv.mobitopp.simulation.Employment;
 
 public class CommutationTicketOwnershipHelper implements GeneratedCommutationTicketOwnershipHelper {

@@ -3,7 +3,6 @@ package edu.kit.ifv.mobitopp.populationsynthesis.commutationticket;
 import java.util.function.Consumer;
 
 import edu.kit.ifv.mobitopp.populationsynthesis.PersonBuilder;
-import edu.kit.ifv.mobitopp.populationsynthesis.commutationticket.gen.GeneratedCommutationTicketOwnership;
 
 public class LogitBasedCommutationTicketOwnershipModel implements Consumer<PersonBuilder> {
 
