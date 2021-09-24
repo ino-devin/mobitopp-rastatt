@@ -1,0 +1,2 @@
+call gradlew.bat clean --refresh-dependencies dependencies build runRastatt_LongTermModule runRastatt_100p_ShortTermModule
+pause
