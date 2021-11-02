@@ -77,7 +77,7 @@ import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
 public class LongTermModule extends PopulationSynthesis {
 
 	private static final RegionalLevel commuterLevel = RegionalLevel.community;
-	private static final double maxDistance = 1.0d;
+	private static final double maxDistance = 0.001d;
 	private final Random seedGenerator;
 
 	public LongTermModule(SynthesisContext context) {
