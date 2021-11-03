@@ -117,3 +117,33 @@ tasks.withType(JavaExec) {
     jvmArgs '-XX:+UseG1GC'
     jvmArgs '-Dnashorn.args="--no-deprecation-warning"'
 }
+
+task createRunFiles {
+    dependsOn build
+    println("Creating run files")
+    mkdir "${rootDir}/run"
+    tasks.each {t ->
+        if(t.group == 'application') {
+            def name = t.name
+            println("create file for: ${name}")
+            new File("${rootDir}/run/run-${name}.bat").text = 
+"""
+cd ..
+call gradlew.bat clean --refresh-dependencies dependencies build $name
+pause
+"""
+
+			new File("${rootDir}/run/run-${name}.sh").text = 
+"""
+#!/bin/bash
+cd ..
+./gradlew clean --refresh-dependencies dependencies build $name
+read
+"""
+        }
+    }
+}
+configure(createRunFiles) {
+    group='help'
+    description = 'Creates .bat and .sh starter files for each application task'
+}
