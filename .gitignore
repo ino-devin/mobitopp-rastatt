@@ -8,3 +8,4 @@
 *.xmi
 **/gen/
 **/generated/
+/run/run-**
