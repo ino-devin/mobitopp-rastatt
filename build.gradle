@@ -116,6 +116,8 @@ tasks.withType(JavaExec) {
     jvmArgs '-Xss512M'
     jvmArgs '-XX:+UseG1GC'
     jvmArgs '-Dnashorn.args="--no-deprecation-warning"'
+    jvmArgs '-Xmx4G'
+    jvmArgs '-Xms4G'
 }
 
 task createRunFiles {
