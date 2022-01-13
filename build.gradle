@@ -1,12 +1,12 @@
 buildscript {
   repositories {
-    jcenter()
     maven {
       url "https://plugins.gradle.org/m2/"
     }
   }
   dependencies {
     classpath files('libs/code-gen-gradle-plugin-0.2.2.25.jar')
+    classpath files('libs/edu.kit.ifv.codegen-0.2.2.90.jar')
   }
   
 }
@@ -24,9 +24,6 @@ targetCompatibility = 1.12
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
-    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
-    maven { url 'https://jitpack.io' }
 	flatDir {
 		dirs 'libs'
 	}
