@@ -1,7 +1,12 @@
 package edu.kit.ifv.mobitopp.simulation;
 
+import static edu.kit.ifv.mobitopp.time.DayOfWeek.FRIDAY;
+import static edu.kit.ifv.mobitopp.time.DayOfWeek.MONDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.SATURDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.SUNDAY;
+import static edu.kit.ifv.mobitopp.time.DayOfWeek.THURSDAY;
+import static edu.kit.ifv.mobitopp.time.DayOfWeek.TUESDAY;
+import static edu.kit.ifv.mobitopp.time.DayOfWeek.WEDNESDAY;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +34,7 @@ import edu.kit.ifv.mobitopp.simulation.modechoice.gen.NullModeChoiceModelLogger;
 import edu.kit.ifv.mobitopp.simulation.person.PersonStateSimple;
 import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
+import edu.kit.ifv.mobitopp.time.DayOfWeek;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
 
@@ -167,19 +173,34 @@ public class SimulatorBuilder {
 	private void createMatrixWriters(DemandSimulatorPassenger simulator) {
 		if (isParameterSet("writeMatrices")) {
 			List<ZoneId> zoneIds = context.dataRepository().zoneRepository().getZoneIds();
+			
+			
+			ActiveListenersManagerBuilder builder = new ActiveListenersManagerBuilder();
+			
+			if (isParameterSet("dayMatrices")) {
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(MONDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(TUESDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(WEDNESDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(THURSDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(FRIDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(SATURDAY), context, 0, 24, 24);
+				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(SUNDAY), context, 0, 24, 24);
 
-			new ActiveListenersManagerBuilder()
+			} else if (isParameterSet("hourMatrices")) {
+				builder
 				.addHourlyWeekdayListeners(zoneIds, matrixModes(), context)
 				.addHourlyDayListeners(zoneIds, matrixModes(), SATURDAY, context)
-				.addHourlyDayListeners(zoneIds, matrixModes(), SUNDAY, context)
-				.logPlannedSchedule()
+				.addHourlyDayListeners(zoneIds, matrixModes(), SUNDAY, context);
+			}
+			
+			builder.logPlannedSchedule()
 				.performActionsAtEnd()
 				.useThreads(context.configuration().getThreadCount())
 				.register(simulator)
 				.build();
 		}
 	}
-
+	
 	private Set<Mode> matrixModes() {
 		return Set
 			.of(StandardMode.BIKE, //
