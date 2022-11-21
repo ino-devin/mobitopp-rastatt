@@ -7,18 +7,19 @@ Please notice that this model does not contain real data about the actual popula
 
 ## Execution
 ### Using gradle
-The example project comes shipped with gradle tasks to run it directly from source. A population can be generated with the `runRastatt_LongTermModule` task and travel demand can be simulated using the `runRastatt_100p_ShortTermModule` task. 
+The example project comes shipped with gradle tasks to run it directly from source. A population can be generated with the `run_rastatt_long-term-module` task and travel demand can be simulated using the `run_rastatt_short-term-module_100p` task. 
 
 ```
-./gradlew clean --refresh-dependencies build runRastatt_LongTermModule runRastatt_100p_ShortTermModule
+./gradlew clean --refresh-dependencies build run_rastatt_long-term-module run_rastatt_short-term-module_100p
 ```
 
 ### Using .sh or .bat
 Additionally, four .sh (resp. .bat) files are included that can be used to run the gradle wrapper without manually typing the commands above.
  - run-clean-build.sh (.bat) refreshes the projects dependencies and compiles the java code
- - run-long-term-module.sh (.bat) runs the long-term module to generate a population (includes clean build)
- - run-short-term-module.sh (.bat) runs the short-term module to simulate travel demand (includes clean-build, requires a previously generated population)
- - run-long-and-short-term-module.sh (.bat) runs both the long- and short-term module (includes clean build)
+ - run_rastatt_long-term-module.sh (.bat) runs the long-term module to generate a population (includes clean build)
+ - run_rastatt_short-term-module_100p.sh (.bat) runs the short-term module to simulate travel demand of 100% of the population (includes clean-build, requires a previously generated population)
+ - run_rastatt_short-term-module_10p.sh (.bat) runs the short-term module to simulate travel demand of 10% of the population (includes clean-build, requires a previously generated population)
+ - run_rastatt_short-term-module_1p.sh (.bat) runs the short-term module to simulate travel demand of 1% of the population (includes clean-build, requires a previously generated population)
 
 ## Results
 The results of the long-term module can be found in `output/rastatt`.

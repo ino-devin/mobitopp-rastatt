@@ -70,7 +70,7 @@ compileJava.dependsOn('generateCode')
 
 //-- Tasks ----------------------------------------------------------------------------
 def pathToName(rel_path) {
-	return project.name + "_" + rel_path.replace('/','_').replace('\\','_').replace('.yaml','')
+	return "run_" + rel_path.replace('/','_').replace('\\','_').replace('.yaml','')
 }
 
 def createLongTermModuleTask(configurationFile) {
