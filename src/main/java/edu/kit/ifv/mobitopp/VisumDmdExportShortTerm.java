@@ -196,12 +196,12 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		return personId(person) + SEP 	//PERSONNO
 			 + personId(person) + SEP 	//SCHEDULENO
 			 + index + SEP		//INDEX
-			 + startDate.getSecond() % 60*60 + ":" + startDate.getMinute() + ":" + startDate.getSecond() + SEP //STARTTIME
-			 + durationMin * 60 + SEP 				//DURATION
+			 + sumHourFormat(startDate) + SEP //STARTTIME
+			 + durationMin * 60 + SEP 		  //DURATION
 			 + activityCode + SEP //ACTIVITYCODE
-			 + locationIdOf(location) + SEP 		//LOCATIONNO
-			 + startDate.weekDay().name() + SEP 			//STARTDAY
-			 + new DateFormat().asDayTime(startDate) 		//STARTTIMEDAY
+			 + locationIdOf(location) + SEP //LOCATIONNO
+			 + dayCode(startDate) + SEP 	//STARTDAY
+			 + new DateFormat().asTime(startDate) 	//STARTTIMEDAY
 			 + NEW_LINE; 
 	}
 
@@ -228,13 +228,13 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			 + personId(person) + SEP	//SCHEDULENO
 			 + personTourNo.get(person.getOid()) + SEP //TOURNO
 			 + index + SEP //INDEX
-			 + startDate.getSecond() % 60*60 + ":" + startDate.getMinute() + ":" + startDate.getSecond() + SEP //SCHEDDEPTIME
+			 + sumHourFormat(startDate) + SEP //SCHEDDEPTIME
 			 + trip.plannedDuration() + "s" + SEP //DURATION
 			 + mapModeToCode(trip.mode()) + SEP //DSEGCODE
 			 + (activityIndex - 1) + SEP //FROMACTIVITYEXECUTIONINDEX
 			 + activityIndex + SEP //TOACTIVITYEXECUTIONINDEX
-			 + startDate.weekDay().name() + SEP 			//STARTDAY
-			 + new DateFormat().asDayTime(startDate) 		//STARTTIMEDAY
+			 + dayCode(startDate) + SEP 			//STARTDAY
+			 + new DateFormat().asTime(startDate) 		//STARTTIMEDAY
 			 + NEW_LINE;
 	}
 	
@@ -269,6 +269,31 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		}
 
 		return legs.stream().flatMap(l -> collectLegs(l).stream()).collect(Collectors.toList());
+	}
+	
+	private String sumHourFormat(Time time) {
+		return String.format("%02d:%02d:%02d", Math.floorDiv(time.toSeconds(), 60*60), time.getMinute() , time.getSecond());
+	}
+	
+	private String dayCode(Time time) {
+		switch (time.weekDay()) {
+			case MONDAY:
+				return "Mo.";
+			case TUESDAY:
+				return "Di.";
+			case WEDNESDAY:
+				return "Mi.";
+			case THURSDAY:
+				return "Do.";
+			case FRIDAY:
+				return "Fr.";
+			case SATURDAY:
+				return "Sa.";
+			case SUNDAY:
+				return "So.";
+			default:
+				return "??";
+		}
 	}
 	
 }
