@@ -3,6 +3,7 @@ package edu.kit.ifv.mobitopp;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.locationIdOf;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.personId;
 import static edu.kit.ifv.mobitopp.WriterFactory.getWriter;
+import static java.lang.Math.max;
 
 import java.io.File;
 import java.io.IOException;
@@ -197,7 +198,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			 + personId(person) + SEP 	//SCHEDULENO
 			 + index + SEP		//INDEX
 			 + sumHourFormat(startDate) + SEP //STARTTIME
-			 + (durationMin * 60) + "s" + SEP 		  //DURATION
+			 + max(0, durationMin * 60) + "s" + SEP 		  //DURATION
 			 + activityCode + SEP //ACTIVITYCODE
 			 + locationIdOf(location) + SEP //LOCATIONNO
 			 + dayCode(startDate) + SEP 	//STARTDAY
@@ -229,7 +230,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			 + personTourNo.get(person.getOid()) + SEP //TOURNO
 			 + index + SEP //INDEX
 			 + sumHourFormat(startDate) + SEP //SCHEDDEPTIME
-			 + (trip.plannedDuration()*60) + "s" + SEP //DURATION
+			 + max(0, trip.plannedDuration()*60) + "s" + SEP //DURATION
 			 + mapModeToCode(trip.mode()) + SEP //DSEGCODE
 			 + (activityIndex - 1) + SEP //FROMACTIVITYEXECUTIONINDEX
 			 + activityIndex + SEP //TOACTIVITYEXECUTIONINDEX
