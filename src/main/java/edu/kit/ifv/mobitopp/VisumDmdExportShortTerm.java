@@ -197,7 +197,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			 + personId(person) + SEP 	//SCHEDULENO
 			 + index + SEP		//INDEX
 			 + sumHourFormat(startDate) + SEP //STARTTIME
-			 + durationMin * 60 + SEP 		  //DURATION
+			 + (durationMin * 60) + "s" + SEP 		  //DURATION
 			 + activityCode + SEP //ACTIVITYCODE
 			 + locationIdOf(location) + SEP //LOCATIONNO
 			 + dayCode(startDate) + SEP 	//STARTDAY
@@ -229,7 +229,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			 + personTourNo.get(person.getOid()) + SEP //TOURNO
 			 + index + SEP //INDEX
 			 + sumHourFormat(startDate) + SEP //SCHEDDEPTIME
-			 + trip.plannedDuration() + "s" + SEP //DURATION
+			 + (trip.plannedDuration()*60) + "s" + SEP //DURATION
 			 + mapModeToCode(trip.mode()) + SEP //DSEGCODE
 			 + (activityIndex - 1) + SEP //FROMACTIVITYEXECUTIONINDEX
 			 + activityIndex + SEP //TOACTIVITYEXECUTIONINDEX
