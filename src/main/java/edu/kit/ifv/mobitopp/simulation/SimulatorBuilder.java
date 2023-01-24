@@ -8,9 +8,12 @@ import static edu.kit.ifv.mobitopp.time.DayOfWeek.THURSDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.TUESDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.WEDNESDAY;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import edu.kit.ifv.mobitopp.VisumDmdExportLongTerm;
+import edu.kit.ifv.mobitopp.VisumDmdExportShortTerm;
 import edu.kit.ifv.mobitopp.concurrent.ParallelExecutor;
 import edu.kit.ifv.mobitopp.concurrent.WaitingExecutor;
 import edu.kit.ifv.mobitopp.data.ZoneId;
@@ -70,6 +73,17 @@ public class SimulatorBuilder {
 	}
 
 	public DemandSimulator build() {
+		
+		try {
+			VisumDmdExportShortTerm export = new VisumDmdExportShortTerm(context);
+			export.init(context);
+			context.personResults().addListener(export);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		modeAvailabilityModel = createModeAvailabilityModel();
 		DestinationChoiceModel targetSelector = createDestinationChoiceModel();
 		TourBasedModeChoiceModel modeSelector = createModeChoiceModel();
@@ -85,6 +99,7 @@ public class SimulatorBuilder {
 			PersonStateSimple.UNINITIALIZED, context());
 
 		createMatrixWriters(simulator);
+		
 
 		return simulator;
 	}

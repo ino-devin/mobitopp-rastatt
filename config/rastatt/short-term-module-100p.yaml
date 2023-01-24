@@ -22,8 +22,8 @@ modeChoice:
   main: config/shared/parameters/mode_choice_main_parameters.txt
   modePreferencesSeed: 42
   travelTimeSensitivitySeed: 42
-  preferencesFile: output/results/simulation/preferences.csv
-  travelTimeSensitivitiesFile: output/results/simulation/travel-time-sensitivities.csv
+  preferencesFile: output/rastatt/results/simulation/preferences.csv
+  travelTimeSensitivitiesFile: output/rastatt/results/simulation/travel-time-sensitivities.csv
 fractionOfPopulation: 1
 #numberOfZones: 1174
 resultFolder: output/rastatt/results/simulation

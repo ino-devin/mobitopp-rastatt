@@ -16,7 +16,7 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 
 group = 'edu.kit.ifv.mobitopp'
-wrapper.gradleVersion = '5.2'
+wrapper.gradleVersion = '6.3'
 
 sourceCompatibility = 1.12
 targetCompatibility = 1.12
@@ -38,7 +38,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     compileOnly 'org.projectlombok:lombok:1.18.8'
     implementation 'edu.kit.ifv.mobitopp:actitopp:1.9+',
-    		       'edu.kit.ifv.mobitopp:mobitopp:0.2.3.+',
+    		       'edu.kit.ifv.mobitopp:mobitopp:0.3+',
                    'net.sf.opencsv:opencsv:2.3'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0',
@@ -109,12 +109,10 @@ tasks.withType(JavaExec) {
     dependsOn check
     enableAssertions = "true"
     group = "application"
-    maxHeapSize = "75G"
+    maxHeapSize="3G"
     jvmArgs '-Xss512M'
     jvmArgs '-XX:+UseG1GC'
     jvmArgs '-Dnashorn.args="--no-deprecation-warning"'
-    jvmArgs '-Xmx4G'
-    jvmArgs '-Xms4G'
 }
 
 task createRunFiles {

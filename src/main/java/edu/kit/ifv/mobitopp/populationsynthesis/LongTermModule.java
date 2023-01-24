@@ -4,6 +4,7 @@ import static edu.kit.ifv.mobitopp.util.collections.StreamUtils.toLinkedMap;
 import static java.util.function.Function.identity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import edu.kit.ifv.mobitopp.VisumDmdExportLongTerm;
 import edu.kit.ifv.mobitopp.data.DemandRegion;
 import edu.kit.ifv.mobitopp.data.FixedDistributionMatrix;
 import edu.kit.ifv.mobitopp.data.PanelDataRepository;
@@ -79,10 +81,20 @@ public class LongTermModule extends PopulationSynthesis {
 	private static final RegionalLevel commuterLevel = RegionalLevel.community;
 	private static final double maxDistance = 0.001d;
 	private final Random seedGenerator;
+	private VisumDmdExportLongTerm export;
 
 	public LongTermModule(SynthesisContext context) {
 		super(context);
 		seedGenerator = new Random(context.seed());
+		
+		try {
+			export = new VisumDmdExportLongTerm(context);
+			export.init(context);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			export = null;
+		}
 	}
 
 	@Override
@@ -95,6 +107,7 @@ public class LongTermModule extends PopulationSynthesis {
 		steps.add(educationDestinationSelector());
 		steps.add(carOwnershipModel());
 		steps.add(commutationTicketOwnershipModel());
+		steps.add(export.asSynthesisStep());
 		steps.add(storeData());
 		steps.add(cleanData());
 		DemandDataForDemandRegionCalculator regionCalculator = createZoneCalculator();
@@ -355,6 +368,11 @@ public class LongTermModule extends PopulationSynthesis {
 
 	private static EdgeFilter edgeFilter() {
 		return EdgeFilter.allEdges;
+	}
+	
+	@Override
+	protected void executeAfterCreation() {
+		export.finish();
 	}
 
 }
