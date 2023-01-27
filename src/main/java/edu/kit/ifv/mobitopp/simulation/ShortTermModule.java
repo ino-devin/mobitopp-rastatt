@@ -29,6 +29,7 @@ public class ShortTermModule extends Simulation {
 		super.simulate();
 		
 		if (export != null) {
+			System.out.println("finish export of visum dmd");
 			export.finish();
 		}
 	}
