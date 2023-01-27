@@ -152,7 +152,9 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			tourWriter.write(generateVersoinHeader());
 			tourWriter.write(NEW_LINE);
 			tourWriter.write(generateTourHeader());
+			activityWriter.write(NEW_LINE);
 			activityWriter.write(generateActivityHeader());
+			tripsWriter.write(NEW_LINE);
 			tripsWriter.write(generateTripHeader());
 
 		} catch (IOException e) {
