@@ -60,6 +60,15 @@ public class SimulatorBuilder {
 
 	public SimulatorBuilder(SimulationContext context) {
 		this.context = context;
+		
+		try {
+			export = new VisumDmdExportShortTerm(context);
+			export.init(context);
+			context.personResults().addListener(export);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private SimulationContext context() {
@@ -75,17 +84,6 @@ public class SimulatorBuilder {
 	}
 
 	public DemandSimulator build() {
-		
-		try {
-			export = new VisumDmdExportShortTerm(context);
-			export.init(context);
-			context.personResults().addListener(export);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
 		modeAvailabilityModel = createModeAvailabilityModel();
 		DestinationChoiceModel targetSelector = createDestinationChoiceModel();
 		TourBasedModeChoiceModel modeSelector = createModeChoiceModel();
