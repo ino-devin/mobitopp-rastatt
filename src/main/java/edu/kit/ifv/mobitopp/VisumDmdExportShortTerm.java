@@ -1,5 +1,6 @@
 package edu.kit.ifv.mobitopp;
 
+import static edu.kit.ifv.mobitopp.VisumDmdExportLongTerm.generateVersoinHeader;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.locationIdOf;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.personId;
 import static edu.kit.ifv.mobitopp.WriterFactory.getWriter;
@@ -147,6 +148,8 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	
 	public void init(SimulationContext context) {
 		try {
+			tourWriter.write(generateVersoinHeader());
+			tourWriter.write(NEW_LINE);
 			tourWriter.write(generateTourHeader());
 			activityWriter.write(generateActivityHeader());
 			tripsWriter.write(generateTripHeader());
@@ -165,9 +168,10 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	}
 	
 
+	private int tourNoCnt = 1;
 	
 	private String generateTourRow(Person person, FinishedTrip trip) {
-		int tourNo = personTourNo.getOrDefault(person.getOid(), 0) + 1;
+		int tourNo = tourNoCnt++;
 		personTourNo.put(person.getOid(), tourNo);
 		personTourIndex.put(person.getOid(), 1);
 				
@@ -273,6 +277,10 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	}
 	
 	private String sumHourFormat(Time time) {
+		if (time.isBefore(Time.start)) {
+			time = Time.start;
+		}
+	
 		return String.format("%02d:%02d:%02d", Math.floorDiv(time.toSeconds(), 60*60), time.getMinute() , time.getSecond());
 	}
 	

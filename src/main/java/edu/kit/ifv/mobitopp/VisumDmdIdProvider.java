@@ -9,7 +9,7 @@ import edu.kit.ifv.mobitopp.simulation.opportunities.Opportunity;
 public class VisumDmdIdProvider {
 	
 	public static int personId(BasePerson person) {
-		return 1 + person.getId().getOid();
+		return person.getId().getOid(); //+1??
 	}
 	
 	public static int householdId(BaseHousehold household) {

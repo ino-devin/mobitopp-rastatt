@@ -298,7 +298,7 @@ public class VisumDmdExportLongTerm {
 	}
 	
 	
-	private String generateVersoinHeader() {
+	public static String generateVersoinHeader() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");  
 		LocalDateTime now = LocalDateTime.now();
 		String date = dtf.format(now);
@@ -348,7 +348,7 @@ public class VisumDmdExportLongTerm {
 		return "*" + NEW_LINE
 				+ "* Tabelle: Standorte" + NEW_LINE
 				+ "*" + NEW_LINE
-				+ "$LOCATION:NO;XCOORD;YCOORD;ZONENO;POIKEY;ACTTYPE;ATTR;ISHH" + NEW_LINE;
+				+ "$LOCATION:NO;XCOORD;YCOORD;ZONENO;ACTTYPE;ATTR;ISHH" + NEW_LINE;
 	}
 	
 	private String generateLocationRow(BaseHousehold household) {
