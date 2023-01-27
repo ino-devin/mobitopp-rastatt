@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import edu.kit.ifv.mobitopp.Disclaimer;
+import edu.kit.ifv.mobitopp.VisumDmdExportShortTerm;
 import edu.kit.ifv.mobitopp.data.local.DynamicTypeMapping;
 import edu.kit.ifv.mobitopp.data.local.configuration.TravelTimeMatrixType;
 import edu.kit.ifv.mobitopp.populationsynthesis.DefaultMappings;
@@ -15,6 +16,7 @@ import edu.kit.ifv.mobitopp.visum.StandardNetfileLanguages;
 public class ShortTermModule extends Simulation {
 
 	private final ModePreferencesWriter writer;
+	private VisumDmdExportShortTerm export;
 
 	public ShortTermModule(SimulationContext context) {
 		super(context);
@@ -25,11 +27,17 @@ public class ShortTermModule extends Simulation {
 	public void simulate() {
 		writer.writeInfluencingFaktors();
 		super.simulate();
+		
+		if (export != null) {
+			export.finish();
+		}
 	}
 
 	@Override
 	protected DemandSimulator simulator() {
-		return new SimulatorBuilder(context()).build();
+		SimulatorBuilder builder = new SimulatorBuilder(context());
+		this.export = builder.getExport();
+		return builder.build();
 	}
 	
 	public static void main(String... args) throws IOException {
@@ -67,4 +75,5 @@ public class ShortTermModule extends Simulation {
 	public static void startSimulation(SimulationContext context) {
 		new ShortTermModule(context).simulate();
 	}
+	
 }

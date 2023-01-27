@@ -3,6 +3,7 @@ package edu.kit.ifv.mobitopp;
 import static edu.kit.ifv.mobitopp.VisumDmdExportLongTerm.generateVersoinHeader;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.locationIdOf;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.personId;
+import static edu.kit.ifv.mobitopp.WriterFactory.finishWriter;
 import static edu.kit.ifv.mobitopp.WriterFactory.getWriter;
 import static java.lang.Math.max;
 
@@ -158,6 +159,18 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			System.err.println("Could not init .dmd files");
 		}
 
+	}
+	
+	public void finish() {
+		try {
+			finishWriter(tourWriter);
+			finishWriter(activityWriter);
+			finishWriter(tripsWriter);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+				
 	}
 	
 	private String generateTourHeader() {

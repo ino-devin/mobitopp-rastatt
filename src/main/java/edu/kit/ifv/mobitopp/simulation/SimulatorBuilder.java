@@ -40,6 +40,7 @@ import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
 import edu.kit.ifv.mobitopp.time.DayOfWeek;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
+import lombok.Getter;
 
 public class SimulatorBuilder {
 
@@ -55,6 +56,7 @@ public class SimulatorBuilder {
 
 	private final SimulationContext context;
 	private ModeAvailabilityModel modeAvailabilityModel;
+	@Getter private VisumDmdExportShortTerm export;
 
 	public SimulatorBuilder(SimulationContext context) {
 		this.context = context;
@@ -75,7 +77,7 @@ public class SimulatorBuilder {
 	public DemandSimulator build() {
 		
 		try {
-			VisumDmdExportShortTerm export = new VisumDmdExportShortTerm(context);
+			export = new VisumDmdExportShortTerm(context);
 			export.init(context);
 			context.personResults().addListener(export);
 			
@@ -99,7 +101,6 @@ public class SimulatorBuilder {
 			PersonStateSimple.UNINITIALIZED, context());
 
 		createMatrixWriters(simulator);
-		
 
 		return simulator;
 	}
