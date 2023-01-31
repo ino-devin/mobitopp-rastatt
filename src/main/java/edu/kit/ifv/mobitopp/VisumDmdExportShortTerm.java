@@ -5,12 +5,15 @@ import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.locationIdOf;
 import static edu.kit.ifv.mobitopp.VisumDmdIdProvider.personId;
 import static edu.kit.ifv.mobitopp.WriterFactory.finishWriter;
 import static edu.kit.ifv.mobitopp.WriterFactory.getWriter;
+import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.util.Comparator.comparing;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +60,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 				tripsWriter.write(generateTripRow(person, trip));
 				
 				if (i < legs.size()) {
-					activityWriter.write(generateActivityRow(person, -1, leg.endDate(), 0, leg.destination().location()));
+					logActivityRow(person, generateActivityRow(person, -1, leg.endDate(), 0, leg.destination().location()));
 				}
 				
 				i++;
@@ -86,13 +89,8 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	@Override
 	public void notifyStartActivity(Person person, ActivityIfc activity) {
 
-		try {
-			activityWriter.write(generateActivityRow(person, activity));
-		} catch (IOException e) {
-			System.err.println("Could not log activity " + String.valueOf(activity) + " of person" + String.valueOf(person));
-			e.printStackTrace();
-		}
-		
+		logActivityRow(person, generateActivityRow(person, activity));
+
 	}
 
 	@Override
@@ -133,6 +131,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	private final Map<Integer, Integer> personTourNo;
 	private final Map<Integer, Integer> personTourIndex;
 	private final Map<Integer, Integer> personActivityIndex;
+	private final Map<Integer, String>  personActivityLogs;
 	
 	public VisumDmdExportShortTerm(SimulationContext context) throws IOException {
 		
@@ -144,6 +143,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		this.personTourNo = new HashMap<>();
 		this.personTourIndex = new HashMap<>();
 		this.personActivityIndex = new HashMap<>();
+		this.personActivityLogs = new HashMap<>();
 
 	}
 	
@@ -164,8 +164,10 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	}
 	
 	public void finish() {
+		writeActivitiesSorted();
+		
 		try {
-			finishWriter(tourWriter);
+			finishWriter(tourWriter);		
 			finishWriter(activityWriter);
 			finishWriter(tripsWriter);
 			
@@ -173,6 +175,22 @@ public class VisumDmdExportShortTerm implements PersonListener {
 			e.printStackTrace();
 		}
 				
+	}
+	
+	private void writeActivitiesSorted() {
+		personActivityLogs.entrySet()
+		  .stream()
+		  .sorted(comparing(e -> e.getKey()))
+		  .forEach(e -> {
+			  
+			  try {
+				activityWriter.write(e.getValue());
+			} catch (IOException e1) {
+				System.err.println("Could not log activites of person " + e.getKey());
+				e1.printStackTrace();
+			}
+			  
+		  });
 	}
 	
 	private String generateTourHeader() {
@@ -205,6 +223,10 @@ public class VisumDmdExportShortTerm implements PersonListener {
 				+ "$ACTIVITYEXECUTION:PERSONNO;SCHEDULENO;INDEX;STARTTIME;DURATION;ACTIVITYCODE;LOCATIONNO;STARTDAY;STARTTIMEDAY" + NEW_LINE;
 	}
 	
+	private void logActivityRow(Person person, String row) {
+		personActivityLogs.merge(person.getOid(), row, (s, r) -> s + r);
+	}
+	
 	private String generateActivityRow(Person person, ActivityIfc activity) {
 		return generateActivityRow(person, activity.activityType().getTypeAsInt(), activity.startDate(), activity.duration(), activity.location());
 	}
@@ -212,6 +234,12 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	private String generateActivityRow(Person person, int activityCode, Time startDate, int durationMin, Location location) {
 		int index = personActivityIndex.getOrDefault(person.getOid(), 1);
 		personActivityIndex.put(person.getOid(), index + 1);
+		
+		if (startDate.isBefore(Time.start)) {
+			int cutOff = abs(Time.start.differenceTo(startDate).toMinutes());
+			durationMin = Math.max(durationMin-cutOff, 0);
+			startDate = Time.start;
+		}
 		
 		return personId(person) + SEP 	//PERSONNO
 			 + personId(person) + SEP 	//SCHEDULENO
@@ -241,15 +269,20 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		personTourIndex.put(person.getOid(), index+1);
 		
 		int activityIndex = personActivityIndex.get(person.getOid());
-		
+		int durationMin = trip.plannedDuration();
 		Time startDate = trip.startDate();
+		if (startDate.isBefore(Time.start)) {
+			int cutOff = abs(Time.start.differenceTo(startDate).toMinutes());
+			durationMin = Math.max(durationMin-cutOff, 0);
+			startDate = Time.start;
+		}
 		
 		return personId(person) + SEP 	//PERSONNO
 			 + personId(person) + SEP	//SCHEDULENO
 			 + personTourNo.get(person.getOid()) + SEP //TOURNO
 			 + index + SEP //INDEX
 			 + sumHourFormat(startDate) + SEP //SCHEDDEPTIME
-			 + max(0, trip.plannedDuration()*60) + "s" + SEP //DURATION
+			 + max(0, durationMin*60) + "s" + SEP //DURATION
 			 + mapModeToCode(trip.mode()) + SEP //DSEGCODE
 			 + (activityIndex - 1) + SEP //FROMACTIVITYEXECUTIONINDEX
 			 + activityIndex + SEP //TOACTIVITYEXECUTIONINDEX
@@ -291,11 +324,8 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		return legs.stream().flatMap(l -> collectLegs(l).stream()).collect(Collectors.toList());
 	}
 	
-	private String sumHourFormat(Time time) {
-		if (time.isBefore(Time.start)) {
-			time = Time.start;
-		}
 	
+	private String sumHourFormat(Time time) {
 		return String.format("%02d:%02d:%02d", Math.floorDiv(time.toSeconds(), 60*60), time.getMinute() , time.getSecond());
 	}
 	
