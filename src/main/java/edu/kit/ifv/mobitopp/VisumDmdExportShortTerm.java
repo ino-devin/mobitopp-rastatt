@@ -13,14 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.kit.ifv.mobitopp.data.Zone;
-import edu.kit.ifv.mobitopp.populationsynthesis.SynthesisContext;
 import edu.kit.ifv.mobitopp.routing.Path;
 import edu.kit.ifv.mobitopp.simulation.ActivityType;
 import edu.kit.ifv.mobitopp.simulation.Car;
@@ -47,31 +45,34 @@ public class VisumDmdExportShortTerm implements PersonListener {
 
 	@Override
 	public void notifyEndTrip(Person person, FinishedTrip trip) {
+		
 		try {
 			
 			if (trip.previousActivity().activityType().equals(ActivityType.HOME)) {
 				tourWriter.write(generateTourRow(person, trip));
 			}
 			
-			List<FinishedTrip> legs = collectLegs(trip);
-				
-			int i = 1;
-			for (FinishedTrip leg : legs) {
-				tripsWriter.write(generateTripRow(person, trip));
-				
-				if (i < legs.size()) {
-					logActivityRow(person, generateActivityRow(person, -1, leg.endDate(), 0, leg.destination().location()));
-				}
-				
-				i++;
-			}
-
-			
 		} catch (IOException e) {
-			System.err.println("Could not log trip " + String.valueOf(trip) + " of person" + String.valueOf(person));
+			System.err.println("Could not log tour starting with " + String.valueOf(trip) + " of person" + String.valueOf(person));
 			e.printStackTrace();
 		}
 		
+		List<FinishedTrip> legs = collectLegs(trip);
+			
+		int i = 1;
+		for (FinishedTrip leg : legs) {
+			logTripRow(person, generateTripRow(person, trip));
+			
+			if (i < legs.size()) {
+				logActivityRow(person, generateActivityRow(person, -1, leg.endDate(), 0, leg.destination().location()));
+			}
+			
+			i++;
+		}
+		
+		if (trip.plannedEndDate().isAfterOrEqualTo(Time.start.plusWeeks(1))) {
+			logActivityRow(person, generateActivityRow(person, trip.nextActivity()));
+		}
 	}
 
 	@Override
@@ -132,6 +133,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	private final Map<Integer, Integer> personTourIndex;
 	private final Map<Integer, Integer> personActivityIndex;
 	private final Map<Integer, String>  personActivityLogs;
+	private final Map<Integer, String>  personTripLogs;
 	
 	public VisumDmdExportShortTerm(SimulationContext context) throws IOException {
 		
@@ -144,7 +146,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 		this.personTourIndex = new HashMap<>();
 		this.personActivityIndex = new HashMap<>();
 		this.personActivityLogs = new HashMap<>();
-
+		this.personTripLogs = new HashMap<>();
 	}
 	
 	public void init(SimulationContext context) {
@@ -165,7 +167,7 @@ public class VisumDmdExportShortTerm implements PersonListener {
 	
 	public void finish() {
 		writeActivitiesSorted();
-		
+		writeTripsSorted();
 		try {
 			finishWriter(tourWriter);		
 			finishWriter(activityWriter);
@@ -187,6 +189,22 @@ public class VisumDmdExportShortTerm implements PersonListener {
 				activityWriter.write(e.getValue());
 			} catch (IOException e1) {
 				System.err.println("Could not log activites of person " + e.getKey());
+				e1.printStackTrace();
+			}
+			  
+		  });
+	}
+	
+	private void writeTripsSorted() {
+		personTripLogs.entrySet()
+		  .stream()
+		  .sorted(comparing(e -> e.getKey()))
+		  .forEach(e -> {
+			  
+			  try {
+				tripsWriter.write(e.getValue());
+			} catch (IOException e1) {
+				System.err.println("Could not log trips of person " + e.getKey());
 				e1.printStackTrace();
 			}
 			  
@@ -259,6 +277,10 @@ public class VisumDmdExportShortTerm implements PersonListener {
 				+ "* Tabelle: Trips" + NEW_LINE
 				+ "*" + NEW_LINE
 				+ "$TRIP:PERSONNO;SCHEDULENO;TOURNO;INDEX;SCHEDDEPTIME;DURATION;DSEGCODE;FROMACTIVITYEXECUTIONINDEX;TOACTIVITYEXECUTIONINDEX;STARTDAY;STARTTIMEDAY" + NEW_LINE;
+	}
+	
+	private void logTripRow(Person person, String row) {
+		personTripLogs.merge(person.getOid(), row, (s, r) -> s + r);
 	}
 	
 	private String generateTripRow(Person person, FinishedTrip trip) {

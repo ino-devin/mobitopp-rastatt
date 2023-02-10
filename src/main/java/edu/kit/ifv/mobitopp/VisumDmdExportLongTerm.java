@@ -37,80 +37,7 @@ public class VisumDmdExportLongTerm {
 
 	private static final String NEW_LINE = "\r\n";
 
-//	private final static Category resultCategoryLocations = createResultCategoryLocations();
-//
-//	@Getter
-//	private final Results results;
-//	
-//	
-//	public VisumDmdExport(Results results) {
-//		this.results = results;
-//	}
-//	
-//	public void logFixedLocations(PersonBuilder person) {
-//		person.fixedDestinations()
-//			  .forEach(f-> logLocation(f.zone().getId(), f.location()));
-//	}
-//	
-//	public void logFixedLocations(Person person) {
-//		person.getFixedDestinations()
-//			  .forEach(f-> logLocation(f.zone().getId(), f.location()));
-//	}
-//	
-//	public void logHomeLocation(HouseholdForSetup household) {
-//		logLocation(household.homeZone().getId(), household.homeLocation());
-//	}
-//	
-//	public void logHomeLocation(Household household) {
-//		logLocation(household.homeZone().getId(), household.homeLocation());
-//	}
-//	
-//	public void logCenter(Zone zone) {
-//		logLocation(zone.getId(), zone.centroidLocation());
-//	}
-//	
-//	public void logOpportunity(Opportunity opportunity) {
-//		logLocation(opportunity.zone(), opportunity.location());
-//	}
-//	
-//	public void logLocation(ZoneId zone, Location location) {
-//		String msg = zone.getExternalId() + SEP + location.hashCode() + SEP + location.coordinatesP().getX() + SEP + location.coordinatesP().getY();
-//		
-//		results.write(resultCategoryLocations, msg);
-//	}
-//	
-//	
-//	private static Category createResultCategoryLocations() {
-//		return new Category("locationIds", List.of("zone", "hash", "x", "y"));
-//	}
-//
-//
-//	public void logIdsOfZone(DemandZone zone) {
-//		this.logCenter(zone.zone());
-//		
-//		zone.opportunities().forEach(this::logOpportunity);
-//		zone.getPopulation().households().forEach(this::logHomeLocation);
-//		zone.getPopulation().households().flatMap(h -> h.persons()).forEach(this::logFixedLocations);
-//	}
-//	
-//	public void logIdsOfZone(Zone zone) {
-//		this.logCenter(zone);
-//		
-//		zone.opportunities().forEach(this::logOpportunity);
-//		PopulationDataForZone populationData = zone.getDemandData().getPopulationData();	
-//		populationData.getHouseholds().forEach(this::logHomeLocation);
-//		populationData.getHouseholds().stream().flatMap(h -> h.persons()).forEach(this::logFixedLocations);
-//	}
-//	
-//	public PopulationSynthesisStep logIdsStep() {
-//		return new DemandZoneBasedStep(this::logIdsOfZone);
-//	}
-	
-	
-	
-	
-	
-	
+
 	private final Writer locationWriter;
 	private final Writer activityLocationWriter;
 	private final Writer householdWriter;
@@ -348,7 +275,7 @@ public class VisumDmdExportLongTerm {
 		return "*" + NEW_LINE
 				+ "* Tabelle: Standorte" + NEW_LINE
 				+ "*" + NEW_LINE
-				+ "$LOCATION:NO;XCOORD;YCOORD;ZONENO;ACTTYPE;ATTR;ISHH" + NEW_LINE;
+				+ "$LOCATION:NO;XCOORD;YCOORD;ZONENO" + NEW_LINE;
 	}
 	
 	private String generateLocationRow(BaseHousehold household) {
@@ -383,12 +310,12 @@ public class VisumDmdExportLongTerm {
 		row.append(zone.getExternalId()); //ZONENO
 //		row.append(SEP);
 //		//POIKEY
-		row.append(SEP);
-		row.append(activity.getTypeAsInt());
-		row.append(SEP);
-		row.append(attraktivity);
-		row.append(SEP);
-		row.append(activity.equals(HOME) ? 1 : 0);
+//		row.append(SEP);
+//		row.append(activity.getTypeAsInt());
+//		row.append(SEP);
+//		row.append(attraktivity);
+//		row.append(SEP);
+//		row.append(activity.equals(HOME) ? 1 : 0);
 		row.append(NEW_LINE);
 		
 		return row.toString();
