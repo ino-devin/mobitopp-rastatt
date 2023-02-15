@@ -107,6 +107,7 @@ public class LongTermModule extends PopulationSynthesis {
 		steps.add(educationDestinationSelector());
 		steps.add(carOwnershipModel());
 		steps.add(commutationTicketOwnershipModel());
+		steps.add(new CommutingLogger(context()).asSyntheisStep());
 		steps.add(export.asSynthesisStep());
 		steps.add(storeData());
 		steps.add(cleanData());
