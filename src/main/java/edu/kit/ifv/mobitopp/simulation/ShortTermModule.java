@@ -6,12 +6,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import edu.kit.ifv.mobitopp.Disclaimer;
-import edu.kit.ifv.mobitopp.VisumDmdExportShortTerm;
 import edu.kit.ifv.mobitopp.data.local.DynamicTypeMapping;
 import edu.kit.ifv.mobitopp.data.local.configuration.TravelTimeMatrixType;
 import edu.kit.ifv.mobitopp.populationsynthesis.DefaultMappings;
 import edu.kit.ifv.mobitopp.util.dataimport.Bbsr17Repository;
 import edu.kit.ifv.mobitopp.visum.StandardNetfileLanguages;
+import edu.kit.ifv.mobitopp.visum.export.VisumDmdExportShortTerm;
 
 public class ShortTermModule extends Simulation {
 

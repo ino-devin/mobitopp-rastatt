@@ -16,7 +16,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import edu.kit.ifv.mobitopp.VisumDmdExportLongTerm;
+import edu.kit.ifv.mobitopp.concurrent.ParallelHouseholdStep;
+import edu.kit.ifv.mobitopp.concurrent.ParallelPersonStep;
 import edu.kit.ifv.mobitopp.data.DemandRegion;
 import edu.kit.ifv.mobitopp.data.FixedDistributionMatrix;
 import edu.kit.ifv.mobitopp.data.PanelDataRepository;
@@ -75,6 +76,7 @@ import edu.kit.ifv.mobitopp.simulation.emobility.EmobilityPersonCreator;
 import edu.kit.ifv.mobitopp.util.panel.HouseholdOfPanelData;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
+import edu.kit.ifv.mobitopp.visum.export.VisumDmdExportLongTerm;
 
 public class LongTermModule extends PopulationSynthesis {
 
@@ -107,7 +109,6 @@ public class LongTermModule extends PopulationSynthesis {
 		steps.add(educationDestinationSelector());
 		steps.add(carOwnershipModel());
 		steps.add(commutationTicketOwnershipModel());
-		steps.add(new CommutingLogger(context()).asSyntheisStep());
 		steps.add(export.asSynthesisStep());
 		steps.add(storeData());
 		steps.add(cleanData());
@@ -174,7 +175,7 @@ public class LongTermModule extends PopulationSynthesis {
 
 		File input = experimentalParameters().valueAsFile("educationDestinationChoiceParameters");
 		LogitParameters parameters = new ParameterFormularParser().parseToParameter(input);
-		return new PersonBasedStep(EducationDestinationSelector
+		return new ParallelPersonStep(EducationDestinationSelector
 			.standard(panelDataRepository(), demandZoneRepository().zoneRepository(), impedance(),
 				newRandom(), range, rangeMap, parameters));
 	}
@@ -184,7 +185,7 @@ public class LongTermModule extends PopulationSynthesis {
 	}
 
 	private PopulationSynthesisStep activityScheduleAssignment() {
-		return new HouseholdBasedStep(activityScheduleAssigner()::assignActivitySchedule);
+		return new ParallelHouseholdStep(activityScheduleAssigner()::assignActivitySchedule);
 	}
 
 	protected PopulationSynthesisStep storeData() {
@@ -241,7 +242,7 @@ public class LongTermModule extends PopulationSynthesis {
 		CarOwnershipModel carOwnershipModel = new SimpleCarOwnershipModel(numberSelectors::get,
 			electricCarModel);
 		AssignCars assigner = new AssignCars(carOwnershipModel);
-		return new HouseholdBasedStep(assigner::assignCars);
+		return new ParallelHouseholdStep(assigner::assignCars);
 	}
 
 	private GenericElectricCarOwnershipModel loadElectricCarModel() {
@@ -319,7 +320,8 @@ public class LongTermModule extends PopulationSynthesis {
 			utilities, helper);
 		LogitBasedCommutationTicketOwnershipModel commuterOwnershipModel = new LogitBasedCommutationTicketOwnershipModel(
 			generatedModel);
-		return new PersonBasedStep(commuterOwnershipModel);
+		
+		return new ParallelPersonStep(commuterOwnershipModel);
 	}
 
 	private HouseholdCreator createHouseholdCreator() {
@@ -374,6 +376,8 @@ public class LongTermModule extends PopulationSynthesis {
 	@Override
 	protected void executeAfterCreation() {
 		export.finish();
+		ParallelHouseholdStep.shutDown();
+		ParallelPersonStep.shutDown();
 	}
 
 }

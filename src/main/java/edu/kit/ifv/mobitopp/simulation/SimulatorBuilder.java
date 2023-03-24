@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import edu.kit.ifv.mobitopp.VisumDmdExportLongTerm;
-import edu.kit.ifv.mobitopp.VisumDmdExportShortTerm;
 import edu.kit.ifv.mobitopp.concurrent.ParallelExecutor;
 import edu.kit.ifv.mobitopp.concurrent.WaitingExecutor;
 import edu.kit.ifv.mobitopp.data.ZoneId;
@@ -37,9 +35,9 @@ import edu.kit.ifv.mobitopp.simulation.modechoice.gen.NullModeChoiceModelLogger;
 import edu.kit.ifv.mobitopp.simulation.person.PersonStateSimple;
 import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
-import edu.kit.ifv.mobitopp.time.DayOfWeek;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
+import edu.kit.ifv.mobitopp.visum.export.VisumDmdExportShortTerm;
 import lombok.Getter;
 
 public class SimulatorBuilder {
@@ -63,7 +61,7 @@ public class SimulatorBuilder {
 		
 		try {
 			export = new VisumDmdExportShortTerm(context);
-			export.init(context);
+			export.init();
 			context.personResults().addListener(export);
 			
 		} catch (IOException e) {
