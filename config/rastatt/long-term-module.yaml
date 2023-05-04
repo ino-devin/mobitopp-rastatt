@@ -33,6 +33,7 @@ visumFile: data/rastatt/rastatt.net.bz2
 visumToMobitopp:
   carTransportSystemCode: CAR
 experimental:
+  synthThreads: 32
   actiToppPath: config/shared/parameters/actitopp_purposes
   communityCommuters: data/rastatt/community-to-community-commuters_rastatt_bsp_modell.csv
   maxCommutingTime: 120

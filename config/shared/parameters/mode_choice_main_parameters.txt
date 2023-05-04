@@ -1,9 +1,9 @@
-asc_car_d_mu               =   0.0000  +5 +0.3 +0.5 +0.5 +1 +0.1
-asc_car_d_sig              =  -5.8862  +2 +0.5 +0.3
-asc_car_p_mu               =  -0.9858  +5 +0.2 +2 +0.2+ 0.2 +0.2
-asc_car_p_sig              =  0.3
-asc_put_mu                 =  -0.6747  +5 -2 
-asc_put_sig                =  -2.5723  +1
+asc_car_d_mu               =   0.0000  +2 +0.3 +0.5 +0.5 +1 +0.1
+asc_car_d_sig              =  -5.8862  +1 +0.5 +0.3
+asc_car_p_mu               =  -0.9858  +3 +0.2 +2 +0.2+ 0.2 +0.2
+asc_car_p_sig              =  0.1
+asc_put_mu                 =  -0.6747  +7 -2 
+asc_put_sig                =  -2.5723  +3
 asc_ped_mu                 =   4.4505  +5 -0.5 
 asc_ped_sig                =  -3.2714  +1
 asc_bike_mu                =   1.3099  +5 -0.05 -0.05 

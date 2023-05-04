@@ -26,14 +26,15 @@ public class ParallelHouseholdStep extends HouseholdBasedStep {
 	}
 
 	private static void initExecutor(int threads) {
-		if (executor != null) {
+		if (executor == null) {
 			executor = Executors.newFixedThreadPool(threads);
+			System.out.println("Using " + threads + " thrads for household steps.");
 		}		
 	}
 	
 	private static ExecutorService getExecutor() {
 		if (executor == null) {
-			initExecutor(4);
+			initExecutor(16);
 		}
 		
 		return executor;
