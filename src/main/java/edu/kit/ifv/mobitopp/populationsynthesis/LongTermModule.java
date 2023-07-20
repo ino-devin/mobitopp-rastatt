@@ -27,6 +27,7 @@ import edu.kit.ifv.mobitopp.populationsynthesis.carownership.CarSegmentModel;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.ElectricCarOwnership;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.GenericElectricCarOwnershipModel;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.LogitBasedCarSegmentModel;
+import edu.kit.ifv.mobitopp.populationsynthesis.carownership.MobilityProviderAssigner;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.MobilityProviderCustomerModel;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.NumberOfCarsSelector;
 import edu.kit.ifv.mobitopp.populationsynthesis.carownership.ProbabilityForElectricCarOwnershipModel;
@@ -53,6 +54,10 @@ import edu.kit.ifv.mobitopp.populationsynthesis.ipu.ProbabilityBasedSelector;
 import edu.kit.ifv.mobitopp.populationsynthesis.ipu.StandardAttribute;
 import edu.kit.ifv.mobitopp.populationsynthesis.ipu.StructuralDataDemandCreatorFactory;
 import edu.kit.ifv.mobitopp.populationsynthesis.ipu.WeightedHouseholdSelector;
+import edu.kit.ifv.mobitopp.populationsynthesis.mobilityprovider.carsharing.CarsharingMembershipHelperImpl;
+import edu.kit.ifv.mobitopp.populationsynthesis.mobilityprovider.carsharing.LogitBasedCarSharingMembershipModel;
+import edu.kit.ifv.mobitopp.populationsynthesis.mobilityprovider.carsharing.generated.CarSharingMembership;
+import edu.kit.ifv.mobitopp.populationsynthesis.mobilityprovider.carsharing.generated.CarSharingMembershipHelper;
 import edu.kit.ifv.mobitopp.populationsynthesis.opportunities.OpportunityLocationSelector;
 import edu.kit.ifv.mobitopp.populationsynthesis.opportunities.RoadBasedOpportunitySelector;
 import edu.kit.ifv.mobitopp.populationsynthesis.region.DemandRegionOdPairCreator;
@@ -95,6 +100,7 @@ public class LongTermModule extends PopulationSynthesis {
 		steps.add(educationDestinationSelector());
 		steps.add(carOwnershipModel());
 		steps.add(commutationTicketOwnershipModel());
+		steps.add(carSharingMembershipModel());
 		steps.add(storeData());
 		steps.add(cleanData());
 		DemandDataForDemandRegionCalculator regionCalculator = createZoneCalculator();
@@ -104,6 +110,22 @@ public class LongTermModule extends PopulationSynthesis {
 			onlyAllZones);
 		return new DemandRegionDemandCalculator(regions(), adaptiveCalculator, steps, impedance());
 	}
+	
+	
+	private static final String CAR_SHARING_COMPANY = "Stadtmobil";
+	private PopulationSynthesisStep carSharingMembershipModel() {
+		String carSharingCopmany = CAR_SHARING_COMPANY;
+		LogitParameters logitParameters = parse(
+			context().configuration().getMobilityProviders().get(carSharingCopmany));
+		CarSharingMembershipHelper helper = new CarsharingMembershipHelperImpl(newRandom());
+		MobilityProviderCustomerModel generatedModel = new CarSharingMembership(logitParameters, helper);
+		LogitBasedCarSharingMembershipModel model = new LogitBasedCarSharingMembershipModel(
+			generatedModel);
+		Map<String, MobilityProviderCustomerModel> models = Map.of(carSharingCopmany, model);
+		return new PersonBasedStep(new MobilityProviderAssigner(models));
+	}
+	
+	
 
 	private List<DemandRegion> regions() {
 		return context()

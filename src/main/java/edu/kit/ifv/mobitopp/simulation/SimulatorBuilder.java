@@ -24,9 +24,9 @@ import edu.kit.ifv.mobitopp.simulation.destinationchoice.DestinationChoiceLogger
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.DestinationChoiceModelLoader;
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.generated.DestinationChoiceUtilityModelLogger;
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.generated.NullDestinationChoiceUtilityModelLogger;
-import edu.kit.ifv.mobitopp.simulation.modeChoice.BasicModeAvailabilityModel;
 import edu.kit.ifv.mobitopp.simulation.modeChoice.ModeAvailabilityModel;
 import edu.kit.ifv.mobitopp.simulation.modeavailability.ModeAvailabilityInDestinationChoice;
+import edu.kit.ifv.mobitopp.simulation.modeavailability.ModeAvailabilityModelConsideringBikeSharing;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceHelperForDestinationChoice;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceLogger;
 import edu.kit.ifv.mobitopp.simulation.modechoice.gen.ModeChoiceModelLogger;
@@ -34,7 +34,6 @@ import edu.kit.ifv.mobitopp.simulation.modechoice.gen.NullModeChoiceModelLogger;
 import edu.kit.ifv.mobitopp.simulation.person.PersonStateSimple;
 import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
-import edu.kit.ifv.mobitopp.time.DayOfWeek;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
 
@@ -47,7 +46,9 @@ public class SimulatorBuilder {
 			StandardMode.PASSENGER, //
 			StandardMode.BIKE, //
 			StandardMode.PEDESTRIAN, //
-			StandardMode.PUBLICTRANSPORT //
+			StandardMode.PUBLICTRANSPORT, //
+			StandardMode.CARSHARING_STATION, //
+			StandardMode.CARSHARING_FREE //
 		);
 
 	private final SimulationContext context;
@@ -85,14 +86,14 @@ public class SimulatorBuilder {
 			PersonStateSimple.UNINITIALIZED, context());
 
 		createMatrixWriters(simulator);
-
+	
 		return simulator;
 	}
 
 
 
 	private ModeAvailabilityModel createModeAvailabilityModel() {
-		return new BasicModeAvailabilityModel(impedance());
+		return new ModeAvailabilityModelConsideringBikeSharing(impedance());
 	}
 
 	private DestinationChoiceModel createDestinationChoiceModel() {
