@@ -26,14 +26,15 @@ public class ParallelPersonStep extends PersonBasedStep {
 	}
 
 	private static void initExecutor(int threads) {
-		if (executor != null) {
+		if (executor == null) {
 			executor = Executors.newFixedThreadPool(threads);
+			System.out.println("Using " + threads + " thrads for person steps.");
 		}		
 	}
 	
 	private static ExecutorService getExecutor() {
 		if (executor == null) {
-			initExecutor(4);
+			initExecutor(8);
 		}
 		
 		return executor;
