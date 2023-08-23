@@ -33,7 +33,7 @@ public class ParallelHouseholdStep extends HouseholdBasedStep {
 	
 	private static ExecutorService getExecutor() {
 		if (executor == null) {
-			initExecutor(4);
+			initExecutor(8);
 		}
 		
 		return executor;

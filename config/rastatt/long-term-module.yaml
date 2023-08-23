@@ -7,7 +7,7 @@ dataSource: !file
   demandDataFolder: output/rastatt/demand-data
   matrixConfigurationFile: data/rastatt/matrices/analysis/matrix-configuration.yaml
   attractivityDataFile: data/rastatt/zoneproperties/analysis/Attractivities.csv
-  zonePropertiesDataFile: data/rastatt/zoneproperties/analysis/zoneproperties.csv
+  zonePropertiesDataFile: data/rastatt/zoneproperties/analysis/zp_new.csv
   parkingFacilitiesDataFile: data/rastatt/zoneproperties/analysis/parkingFacilities.csv
   bikeSharingPropertiesDataFile: data/rastatt/zoneproperties/analysis/bikesharing-properties.csv
   carSharingStationsDataFile: data/rastatt/zoneproperties/analysis/carsharing-stations.csv
@@ -28,7 +28,7 @@ maxGoodnessDelta: 1e-5
 panelData: data/rastatt/population/population.csv
 resultFolder: output/rastatt/results/population-synthesis
 seed: 77859
-synthesisZoneProperties: data/rastatt/synthesis-zone-properties.csv
+synthesisZoneProperties: data/rastatt/zoneproperties/analysis/zp_new.csv
 visumFile: data/rastatt/rastatt.net.bz2
 visumToMobitopp:
   carTransportSystemCode: CAR
