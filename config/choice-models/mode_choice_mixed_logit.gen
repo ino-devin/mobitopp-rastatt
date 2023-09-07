@@ -1,7 +1,7 @@
 ProbabilityClass edu.kit.ifv.mobitopp.simulation.modechoice.gen.GeneratedMixedModeChoice
 
 Interface        edu.kit.ifv.mobitopp.simulation.modeChoice.ModeChoiceModel
-Signature        selectMode(edu.kit.ifv.mobitopp.simulation.Person person,
+Signature        selectMode(edu.kit.ifv.mobitopp.simulation.Person person >,
               edu.kit.ifv.mobitopp.data.Zone origin >,
               edu.kit.ifv.mobitopp.data.Zone destination >,
               edu.kit.ifv.mobitopp.simulation.activityschedule.ActivityIfc previousActivity,
