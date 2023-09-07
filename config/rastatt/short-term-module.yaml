@@ -38,5 +38,7 @@ experimental:
   writeMatrices: false
   dayMatrices: true
   hourMatrices: false
+  logModeChoice: true
+  logModeChoiceN: 0
 #  parameter1: 1
 #  parameter2: 2
