@@ -61,6 +61,7 @@ codeGenInp {
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_mode_preference.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_time_sensitivity.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit.gen",
+            "${rootDir}/config/choice-models/multi-nomial-logit.gen"
 //            "${rootDir}/config/choice-models/transit_pass_ownership.gen"
            ]
 }

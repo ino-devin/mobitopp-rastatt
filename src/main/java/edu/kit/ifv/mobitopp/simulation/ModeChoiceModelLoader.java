@@ -22,6 +22,9 @@ import edu.kit.ifv.mobitopp.simulation.person.ModeToTrip;
 import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModelDummy;
+import edu.kit.ifv.mobitopp.trb.simulation.modechoice.MultiNomialLogit1HelperOldImpl;
+import edu.kit.ifv.mobitopp.trb.simulation.modechoice.gen.MultiNomialLogit1HelperOld;
+import edu.kit.ifv.mobitopp.trb.simulation.modechoice.gen.MultiNomialLogit1Old;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
 import edu.kit.ifv.mobitopp.visum.VisumMatrixParser;
@@ -53,7 +56,33 @@ public class ModeChoiceModelLoader {
 		return context().modeChoiceParameters();
 	}
 
-	public TourBasedModeChoiceModel loadFrom() {
+	public TourBasedModeChoiceModel loadModel() {
+		if (hasConfig("model", "MNL")) {
+			return loadMNL();
+		} else if (hasConfig("model", "MixedLogit")) {
+			return loadMixedLogit();
+		} else {
+			System.out.println("No modeChoice defined in experimental parameters: using default model!");
+			return loadMixedLogit();
+		}
+	}
+	
+	public TourBasedModeChoiceModel loadMNL() {
+		System.out.println("Use Multinomial Logit Mode Choice Model");
+		File paramFile = modeChoiceParameters().valueAsFile("MNL");
+		LogitParameters parameters = new ParameterFormularParser().parseToParameter(paramFile);
+		parameters = addLambdaRoot(parameters);
+		
+		MultiNomialLogit1HelperOld helper = new MultiNomialLogit1HelperOldImpl(impedance, createModeResolver(), modeAvailabilityModel);
+		MultiNomialLogit1Old mainModeChoiceModel = new MultiNomialLogit1Old(parameters, helper);
+		
+		TourBasedModeChoiceModel tourBasedWrapper = new TourBasedModeChoiceModelDummy(mainModeChoiceModel);
+		return new ModeChoiceModelUsingAvailableModes(modeAvailabilityModel, tourBasedWrapper, context().results());
+		
+	}
+	
+	private TourBasedModeChoiceModel loadMixedLogit() {
+		System.out.println("Use Mixed Logit Mode Choice Model");
 		GeneratedMixedModeChoice mainModeChoiceModel = loadMainModel(modeAvailabilityModel,
 			impedance);
 		TourBasedModeChoiceModel tourBasedWrapper = new TourBasedModeChoiceModelDummy(
@@ -153,6 +182,10 @@ public class ModeChoiceModelLoader {
 		ModeToTrip modeToTrip = ModeToTrip.createDefault();
 		DefaultTripFactory base = new DefaultTripFactory(modeToTrip);
 		return base;
+	}
+	
+	private boolean hasConfig(String param, String val) {
+		return modeChoiceParameters().hasValue(param) && modeChoiceParameters().value(param).equals(val);
 	}
 
 }

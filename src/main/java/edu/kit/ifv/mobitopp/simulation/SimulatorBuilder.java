@@ -135,7 +135,7 @@ public class SimulatorBuilder {
 	}
 
 	private TourBasedModeChoiceModel createModeChoiceModel() {
-		return newModeChoiceModelLoader().loadFrom();
+		return newModeChoiceModelLoader().loadModel();
 	}
 
 	private NoRouteChoice createRouteChoice() {

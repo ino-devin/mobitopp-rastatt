@@ -19,6 +19,8 @@ destinationChoice:
   service: config/shared/parameters/destination_choice_parameters_SERVICE.txt
   shopping: config/shared/parameters/destination_choice_parameters_SHOPPING.txt  
 modeChoice:
+  model: MNL
+  MNL: config/shared/parameters/mode_choice_main_parameters-multi-nomial-logit.txt
   main: config/shared/parameters/mode_choice_main_parameters.txt
   modePreferencesSeed: 42
   travelTimeSensitivitySeed: 42
@@ -38,5 +40,6 @@ experimental:
   writeMatrices: false
   dayMatrices: true
   hourMatrices: false
+   # MixedLogit
 #  parameter1: 1
 #  parameter2: 2
