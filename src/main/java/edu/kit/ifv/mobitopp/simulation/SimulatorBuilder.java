@@ -29,12 +29,12 @@ import edu.kit.ifv.mobitopp.simulation.modeChoice.ModeAvailabilityModel;
 import edu.kit.ifv.mobitopp.simulation.modeavailability.ModeAvailabilityInDestinationChoice;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceHelperForDestinationChoice;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceLogger;
+import edu.kit.ifv.mobitopp.simulation.modechoice.RastattModeResolver;
 import edu.kit.ifv.mobitopp.simulation.modechoice.gen.ModeChoiceModelLogger;
 import edu.kit.ifv.mobitopp.simulation.modechoice.gen.NullModeChoiceModelLogger;
 import edu.kit.ifv.mobitopp.simulation.person.PersonStateSimple;
 import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
-import edu.kit.ifv.mobitopp.time.DayOfWeek;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
 
@@ -43,12 +43,12 @@ public class SimulatorBuilder {
 	private static final int SINGLE_THREAD = 1;
 
 	private static final Set<Mode> CHOICE_SET = Set
-		.of(StandardMode.CAR, //
-			StandardMode.PASSENGER, //
-			StandardMode.BIKE, //
-			StandardMode.PEDESTRIAN, //
-			StandardMode.PUBLICTRANSPORT //
-		);
+			.of(StandardMode.CAR, //
+					StandardMode.PASSENGER, //
+					StandardMode.BIKE, //
+					StandardMode.PEDESTRIAN, //
+					StandardMode.PUBLICTRANSPORT //
+			);
 
 	private final SimulationContext context;
 	private ModeAvailabilityModel modeAvailabilityModel;
@@ -81,14 +81,13 @@ public class SimulatorBuilder {
 
 		System.out.println("Initializing simulator...");
 		DemandSimulatorPassenger simulator = new DemandSimulatorPassenger(targetSelector,
-			modeSelector, routeChoice, fixer, randomizer, tripFactory, rescheduling, CHOICE_SET,
-			PersonStateSimple.UNINITIALIZED, context());
+				modeSelector, routeChoice, fixer, randomizer, tripFactory, rescheduling, CHOICE_SET,
+				PersonStateSimple.UNINITIALIZED, context());
 
 		createMatrixWriters(simulator);
 
 		return simulator;
 	}
-
 
 
 	private ModeAvailabilityModel createModeAvailabilityModel() {
@@ -97,18 +96,18 @@ public class SimulatorBuilder {
 
 	private DestinationChoiceModel createDestinationChoiceModel() {
 		LogitParameters baseParameters = new ParameterFormularParser()
-			.parseToParameter(context().destinationChoiceParameters().valueAsFile("base"));
+				.parseToParameter(context().destinationChoiceParameters().valueAsFile("base"));
 
 		ModeAvailabilityModel modeAvailabilityDestination = new ModeAvailabilityInDestinationChoice();
 		ModeChoiceHelperForDestinationChoice helper = newModeChoiceModelLoader()
-			.loadModeChoiceHelper(modeAvailabilityDestination, impedance());
+				.loadModeChoiceHelper(modeAvailabilityDestination, impedance());
 		DestinationChoiceHelperImpl destinationHelper = new DestinationChoiceHelperImpl(impedance(),
-			modeAvailabilityDestination, CHOICE_SET, helper);
+				modeAvailabilityDestination, CHOICE_SET, helper);
 
 		DestinationChoiceUtilityModelLogger logger = destinationChoiceLogger();
 
 		return new DestinationChoiceModelLoader(baseParameters, destinationHelper, logger,
-			executor()).loadFrom(context());
+				executor()).loadFrom(context());
 	}
 
 	private DestinationChoiceUtilityModelLogger destinationChoiceLogger() {
@@ -161,22 +160,21 @@ public class SimulatorBuilder {
 			if (context().experimentalParameters().hasValue("logModeChoiceN")) {
 				n = context().experimentalParameters().valueAsInteger("logModeChoiceN");
 			}
-			loggerMain = new ModeChoiceLogger(n);
-		}		
-		
+			loggerMain = new ModeChoiceLogger(n, context().results(), new RastattModeResolver());
+		}
+
 		return new ModeChoiceModelLoader(modeAvailabilityModel, context(),
-			impedance(), loggerMain);
+				impedance(), loggerMain);
 	}
 
 
-	
 	private void createMatrixWriters(DemandSimulatorPassenger simulator) {
 		if (isParameterSet("writeMatrices")) {
 			List<ZoneId> zoneIds = context.dataRepository().zoneRepository().getZoneIds();
-			
-			
+
+
 			ActiveListenersManagerBuilder builder = new ActiveListenersManagerBuilder();
-			
+
 			if (isParameterSet("dayMatrices")) {
 				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(MONDAY), context, 0, 24, 24);
 				builder.addTimeSlicesBetween(zoneIds, CHOICE_SET, Set.of(TUESDAY), context, 0, 24, 24);
@@ -188,35 +186,35 @@ public class SimulatorBuilder {
 
 			} else if (isParameterSet("hourMatrices")) {
 				builder
-				.addHourlyWeekdayListeners(zoneIds, matrixModes(), context)
-				.addHourlyDayListeners(zoneIds, matrixModes(), SATURDAY, context)
-				.addHourlyDayListeners(zoneIds, matrixModes(), SUNDAY, context);
+						.addHourlyWeekdayListeners(zoneIds, matrixModes(), context)
+						.addHourlyDayListeners(zoneIds, matrixModes(), SATURDAY, context)
+						.addHourlyDayListeners(zoneIds, matrixModes(), SUNDAY, context);
 			}
-			
+
 			builder.logPlannedSchedule()
-				.performActionsAtEnd()
-				.useThreads(context.configuration().getThreadCount())
-				.register(simulator)
-				.build();
+					.performActionsAtEnd()
+					.useThreads(context.configuration().getThreadCount())
+					.register(simulator)
+					.build();
 		}
 	}
-	
+
 	private Set<Mode> matrixModes() {
 		return Set
-			.of(StandardMode.BIKE, //
-				StandardMode.BIKESHARING, //
-				StandardMode.CAR, //
-				StandardMode.CARSHARING_STATION, //
-				StandardMode.CARSHARING_FREE, //
-				StandardMode.PUBLICTRANSPORT, //
-				StandardMode.RIDE_POOLING, //
-				StandardMode.TAXI //
-			);
+				.of(StandardMode.BIKE, //
+						StandardMode.BIKESHARING, //
+						StandardMode.CAR, //
+						StandardMode.CARSHARING_STATION, //
+						StandardMode.CARSHARING_FREE, //
+						StandardMode.PUBLICTRANSPORT, //
+						StandardMode.RIDE_POOLING, //
+						StandardMode.TAXI //
+				);
 	}
 
 	private boolean isParameterSet(String parameter) {
 		return context.experimentalParameters().hasValue(parameter)
-			&& context.experimentalParameters().valueAsBoolean(parameter);
+				&& context.experimentalParameters().valueAsBoolean(parameter);
 	}
 
 }

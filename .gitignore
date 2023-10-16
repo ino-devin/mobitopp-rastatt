@@ -8,4 +8,5 @@
 *.xmi
 **/gen/
 **/generated/
-/run/run-**
+/run/
+*p.yaml
