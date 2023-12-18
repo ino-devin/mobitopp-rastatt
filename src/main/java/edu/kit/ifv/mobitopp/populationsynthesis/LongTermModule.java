@@ -4,17 +4,21 @@ import static edu.kit.ifv.mobitopp.util.collections.StreamUtils.toLinkedMap;
 import static java.util.function.Function.identity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import edu.kit.ifv.mobitopp.concurrent.ParallelHouseholdStep;
+import edu.kit.ifv.mobitopp.concurrent.ParallelPersonStep;
 import edu.kit.ifv.mobitopp.data.DemandRegion;
 import edu.kit.ifv.mobitopp.data.FixedDistributionMatrix;
 import edu.kit.ifv.mobitopp.data.PanelDataRepository;
@@ -73,16 +77,37 @@ import edu.kit.ifv.mobitopp.simulation.emobility.EmobilityPersonCreator;
 import edu.kit.ifv.mobitopp.util.panel.HouseholdOfPanelData;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
+import edu.kit.ifv.mobitopp.visum.export.VisumDmdExportLongTerm;
 
 public class LongTermModule extends PopulationSynthesis {
 
 	private static final RegionalLevel commuterLevel = RegionalLevel.community;
 	private static final double maxDistance = 0.001d;
 	private final Random seedGenerator;
+	private VisumDmdExportLongTerm export;
+	private final int threads;
 
 	public LongTermModule(SynthesisContext context) {
 		super(context);
 		seedGenerator = new Random(context.seed());
+		
+		if (context.experimentalParameters().hasValue("synthThreads")) {
+			threads = context.experimentalParameters().valueAsInteger("synthThreads");
+			System.out.println("Parallel synthesis!");
+		} else {
+			System.out.println("Sequential synthesis!");
+			threads = 1;
+		}
+		
+		
+		try {
+			export = new VisumDmdExportLongTerm(context);
+			export.init(context);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			export = null;
+		}
 	}
 
 	@Override
@@ -95,8 +120,10 @@ public class LongTermModule extends PopulationSynthesis {
 		steps.add(educationDestinationSelector());
 		steps.add(carOwnershipModel());
 		steps.add(commutationTicketOwnershipModel());
+		steps.add(export.asSynthesisStep());
 		steps.add(storeData());
 		steps.add(cleanData());
+		
 		DemandDataForDemandRegionCalculator regionCalculator = createZoneCalculator();
 		DemandDataForDemandRegionCalculator onlyAllZones = new FilteredDemandCalculator(
 			regionCalculator);
@@ -160,9 +187,16 @@ public class LongTermModule extends PopulationSynthesis {
 
 		File input = experimentalParameters().valueAsFile("educationDestinationChoiceParameters");
 		LogitParameters parameters = new ParameterFormularParser().parseToParameter(input);
-		return new PersonBasedStep(EducationDestinationSelector
+		
+		EducationDestinationSelector educationSelector = EducationDestinationSelector
 			.standard(panelDataRepository(), demandZoneRepository().zoneRepository(), impedance(),
-				newRandom(), range, rangeMap, parameters));
+				newRandom(), range, rangeMap, parameters);
+		
+		if (isParallel()) {
+			return new ParallelPersonStep(educationSelector, threads);
+		} else {
+			return new PersonBasedStep(educationSelector);
+		}
 	}
 
 	private String parameterNameOf(ActivityType a) {
@@ -170,7 +204,14 @@ public class LongTermModule extends PopulationSynthesis {
 	}
 
 	private PopulationSynthesisStep activityScheduleAssignment() {
-		return new HouseholdBasedStep(activityScheduleAssigner()::assignActivitySchedule);
+		Consumer<HouseholdForSetup> assignment = activityScheduleAssigner()::assignActivitySchedule;
+		
+		if (isParallel()) {
+			return new ParallelHouseholdStep(assignment, threads);
+		} else {
+			return new HouseholdBasedStep(assignment);
+		}
+		
 	}
 
 	protected PopulationSynthesisStep storeData() {
@@ -227,7 +268,13 @@ public class LongTermModule extends PopulationSynthesis {
 		CarOwnershipModel carOwnershipModel = new SimpleCarOwnershipModel(numberSelectors::get,
 			electricCarModel);
 		AssignCars assigner = new AssignCars(carOwnershipModel);
-		return new HouseholdBasedStep(assigner::assignCars);
+		
+		if (isParallel()) {
+			return new ParallelHouseholdStep(assigner::assignCars);
+		} else {
+			return new HouseholdBasedStep(assigner::assignCars);
+		}
+		
 	}
 
 	private GenericElectricCarOwnershipModel loadElectricCarModel() {
@@ -305,7 +352,13 @@ public class LongTermModule extends PopulationSynthesis {
 			utilities, helper);
 		LogitBasedCommutationTicketOwnershipModel commuterOwnershipModel = new LogitBasedCommutationTicketOwnershipModel(
 			generatedModel);
-		return new PersonBasedStep(commuterOwnershipModel);
+		
+		if (isParallel()) {
+			return new ParallelPersonStep(commuterOwnershipModel);
+		} else {
+			return new PersonBasedStep(commuterOwnershipModel);
+		}
+		
 	}
 
 	private HouseholdCreator createHouseholdCreator() {
@@ -356,5 +409,15 @@ public class LongTermModule extends PopulationSynthesis {
 	private static EdgeFilter edgeFilter() {
 		return EdgeFilter.allEdges;
 	}
+	
+	@Override
+	protected void executeAfterCreation() {
+		export.finish();
+		ParallelHouseholdStep.shutDown();
+		ParallelPersonStep.shutDown();
+	}
 
+	private boolean isParallel() {
+		return threads > 1;
+	}
 }

@@ -8,6 +8,7 @@ import static edu.kit.ifv.mobitopp.time.DayOfWeek.THURSDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.TUESDAY;
 import static edu.kit.ifv.mobitopp.time.DayOfWeek.WEDNESDAY;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,8 @@ import edu.kit.ifv.mobitopp.simulation.person.TripFactory;
 import edu.kit.ifv.mobitopp.simulation.tour.TourBasedModeChoiceModel;
 import edu.kit.ifv.mobitopp.util.parameter.LogitParameters;
 import edu.kit.ifv.mobitopp.util.parameter.ParameterFormularParser;
+import edu.kit.ifv.mobitopp.visum.export.VisumDmdExportShortTerm;
+import lombok.Getter;
 
 public class SimulatorBuilder {
 
@@ -52,9 +55,19 @@ public class SimulatorBuilder {
 
 	private final SimulationContext context;
 	private ModeAvailabilityModel modeAvailabilityModel;
+	@Getter private VisumDmdExportShortTerm export;
 
 	public SimulatorBuilder(SimulationContext context) {
 		this.context = context;
+		
+		try {
+			export = new VisumDmdExportShortTerm(context);
+			export.init();
+			context.personResults().addListener(export);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private SimulationContext context() {
