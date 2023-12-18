@@ -3,6 +3,8 @@ carOwnership:
   ownership: config/shared/parameters/CarOwnershipModelParameter.txt
   segment: config/shared/parameters/LogitBasedCarSegmentModelParameter.txt
 commuterTicket: config/shared/parameters/transit_pass_ownership_parameters.txt
+mobilityProviders:
+  Stadtmobil: config/shared/parameters/carsharing_membership_parameters.txt
 dataSource: !file
   demandDataFolder: output/rastatt/demand-data
   matrixConfigurationFile: data/rastatt/matrices/analysis/matrix-configuration.yaml
