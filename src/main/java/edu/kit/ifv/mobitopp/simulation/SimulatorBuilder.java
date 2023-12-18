@@ -25,9 +25,9 @@ import edu.kit.ifv.mobitopp.simulation.destinationchoice.DestinationChoiceLogger
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.DestinationChoiceModelLoader;
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.generated.DestinationChoiceUtilityModelLogger;
 import edu.kit.ifv.mobitopp.simulation.destinationchoice.generated.NullDestinationChoiceUtilityModelLogger;
-import edu.kit.ifv.mobitopp.simulation.modeChoice.BasicModeAvailabilityModel;
 import edu.kit.ifv.mobitopp.simulation.modeChoice.ModeAvailabilityModel;
 import edu.kit.ifv.mobitopp.simulation.modeavailability.ModeAvailabilityInDestinationChoice;
+import edu.kit.ifv.mobitopp.simulation.modeavailability.ModeAvailabilityModelConsideringBikeSharing;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceHelperForDestinationChoice;
 import edu.kit.ifv.mobitopp.simulation.modechoice.ModeChoiceLogger;
 import edu.kit.ifv.mobitopp.simulation.modechoice.RastattModeResolver;
@@ -46,12 +46,14 @@ public class SimulatorBuilder {
 	private static final int SINGLE_THREAD = 1;
 
 	private static final Set<Mode> CHOICE_SET = Set
-			.of(StandardMode.CAR, //
-					StandardMode.PASSENGER, //
-					StandardMode.BIKE, //
-					StandardMode.PEDESTRIAN, //
-					StandardMode.PUBLICTRANSPORT //
-			);
+		.of(StandardMode.CAR, //
+			StandardMode.PASSENGER, //
+			StandardMode.BIKE, //
+			StandardMode.PEDESTRIAN, //
+			StandardMode.PUBLICTRANSPORT, //
+			StandardMode.CARSHARING_STATION, //
+			StandardMode.CARSHARING_FREE //
+		);
 
 	private final SimulationContext context;
 	private ModeAvailabilityModel modeAvailabilityModel;
@@ -98,13 +100,13 @@ public class SimulatorBuilder {
 				PersonStateSimple.UNINITIALIZED, context());
 
 		createMatrixWriters(simulator);
-
+	
 		return simulator;
 	}
 
 
 	private ModeAvailabilityModel createModeAvailabilityModel() {
-		return new BasicModeAvailabilityModel(impedance());
+		return new ModeAvailabilityModelConsideringBikeSharing(impedance());
 	}
 
 	private DestinationChoiceModel createDestinationChoiceModel() {

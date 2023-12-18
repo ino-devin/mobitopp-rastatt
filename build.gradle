@@ -63,7 +63,7 @@ codeGenInp {
 //            "${rootDir}/config/choice-models/access-public-transport.gen",
 //            "${rootDir}/config/choice-models/bikesharing-membership.gen",
 //            "${rootDir}/config/choice-models/car-ownership.gen",
-//            "${rootDir}/config/choice-models/carsharing_membership.gen",
+            "${rootDir}/config/choice-models/carsharing_membership.gen",
             "${rootDir}/config/choice-models/destination-choice.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_mode_preference.gen",
             "${rootDir}/config/choice-models/mode_choice_mixed_logit_time_sensitivity.gen",
