@@ -1,8 +1,5 @@
 buildscript {
   repositories {
-    	maven { url 'http://nexus.ifv.kit.edu/repository/maven-central/' }
-		maven { url 'https://nexus.ifv.kit.edu/repository/maven-releases/' }
-		maven { url 'https://nexus.ifv.kit.edu/repository/maven-snapshots/' }
 		mavenLocal()
 		mavenCentral()
     maven {
@@ -27,8 +24,6 @@ sourceCompatibility = 1.12
 targetCompatibility = 1.12
 
 repositories {
-    maven { url 'https://nexus.ifv.kit.edu/repository/maven-releases/' }
-    maven { url 'https://nexus.ifv.kit.edu/repository/maven-snapshots/' }
     mavenLocal()
     mavenCentral()
 	flatDir {
