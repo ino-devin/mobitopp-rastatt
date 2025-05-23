@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="693c2b09-774b-462c-8644-f48bac8a7936" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rastatt_V1.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Rastatt_V1.ipynb" afterDir="false" />
-    </list>
+    <list default="true" id="693c2b09-774b-462c-8644-f48bac8a7936" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,7 +89,7 @@
       <workItem from="1747985881781" duration="3313000" />
       <workItem from="1747992629645" duration="2483000" />
       <workItem from="1747999874259" duration="3139000" />
-      <workItem from="1748003585709" duration="1028000" />
+      <workItem from="1748003585709" duration="1217000" />
     </task>
     <servers />
   </component>
